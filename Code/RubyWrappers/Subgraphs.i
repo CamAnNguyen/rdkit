@@ -32,24 +32,23 @@
 */
 
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <GraphMol/Subgraphs/Subgraphs.h>
+#include <GraphMol/Subgraphs/SubgraphUtils.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%include <GraphMol/Subgraphs/Subgraphs.h>
+%inline %{
+  std::vector<int> calcPathDiscriminators(RDKit::ROMol &mol,RDKit::PATH_TYPE &path){
+    std::vector<int> res(3);
+    RDKit::Subgraphs::DiscrimTuple tpl=RDKit::Subgraphs::calcPathDiscriminators(mol,path);
+    res[0]=boost::get<0>(tpl);
+    res[1]=boost::get<1>(tpl);
+    res[2]=boost::get<2>(tpl);
+    return res;
+  }
+%}
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%ignore calcPathDiscriminators;
+%newobject pathToSubmol;
+%include <GraphMol/Subgraphs/SubgraphUtils.h>
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>

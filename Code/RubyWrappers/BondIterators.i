@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -31,25 +31,31 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+%include "std_string.i"
+%include "std_vector.i"
+%include "std_map.i"
+%include "std_pair.i"
+
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <GraphMol/BondIterators.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%rename(BondIterator) RDKit::BondIterator_;
+%rename(ConstBondIterator) RDKit::ConstBondIterator_;
+/* Equality testing operators have been overloaded, so we need to expose them in a different way */
+%rename(eq) RDKit::BondIterator_::operator==;
+%rename(ne) RDKit::BondIterator_::operator!=;
+%rename(eq) RDKit::ConstBondIterator_::operator==;
+%rename(ne) RDKit::ConstBondIterator_::operator!=;
+/* Increment and decrement operators currently necessary */
+%rename(next) RDKit::BondIterator_::operator++;
+%rename(next) RDKit::ConstBondIterator_::operator++;
+%rename(prev) RDKit::BondIterator_::operator--;
+%rename(prev) RDKit::ConstBondIterator_::operator--;
+/* A better name for the iterator's Bond object */
+%rename(getBond) RDKit::BondIterator_::operator*;
+%rename(getBond) RDKit::ConstBondIterator_::operator*; 
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%include <GraphMol/BondIterators.h>
+

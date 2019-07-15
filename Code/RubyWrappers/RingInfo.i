@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -32,24 +32,9 @@
 */
 
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <map>
+#include <vector>
+#include <GraphMol/RingInfo.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
-
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
-
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%include <GraphMol/RingInfo.h>

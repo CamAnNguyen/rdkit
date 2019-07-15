@@ -65,7 +65,6 @@
     return res;
   }
 }
-
 %extend RDKit::SparseIntVect<boost::int32_t> {
   std::vector<std::pair<boost::int32_t, int> > getNonzero() const{
     std::vector<std::pair<boost::int32_t, int> > res;
@@ -76,7 +75,6 @@
     return res;
   }
 }
-
 %extend RDKit::SparseIntVect<boost::int64_t> {
   std::vector<std::pair<boost::int64_t, int> > getNonzero() const{
     std::vector<std::pair<boost::int64_t, int> > res;
@@ -87,7 +85,6 @@
     return res;
   }
 }
-
 %newobject getAtomPairFingerprint;
 %newobject getHashedAtomPairFingerprint;
 %newobject getHashedAtomPairFingerprintAsBitVect;

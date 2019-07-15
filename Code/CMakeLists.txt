@@ -27,7 +27,12 @@ add_subdirectory(ML)
 add_subdirectory(ChemicalFeatures)
 
 if(RDK_BUILD_SWIG_WRAPPERS)
-  add_subdirectory(JavaWrappers)
+  if(RDK_BUILD_SWIG_JAVA_WRAPPER)
+    add_subdirectory(JavaWrappers)
+  endif()
+  if(RDK_BUILD_SWIG_RUBY_WRAPPER)
+    add_subdirectory(RubyWrappers)
+  endif()
 endif()
 
 if(RDK_BUILD_PGSQL)

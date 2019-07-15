@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -30,26 +30,44 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <DistGeom/ChiralSet.h>
+#include <DistGeom/BoundsMatrix.h>
+#include <DistGeom/DistGeomUtils.h>
+#include <GraphMol/DistGeomHelpers/BoundsMatrixBuilder.h>
+#include <GraphMol/DistGeomHelpers/Embedder.h>
+#include <DistGeom/TriangleSmooth.h>
+#include <GraphMol/ROMol.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+// A class to generate errors at the C++ level to make sure they are trapped and don't kill the JVM.
+%inline {
+namespace BadCode {
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+	class ErrorGenerator {
+
+	public:
+
+		void badAlloc_1() {
+			double* myarray= new double[2000000000];
+ 
+		};
+		void badAlloc_2() {
+			int* myarray= new int[-1];
+ 
+		};
+		void badCall () {
+			int (*f)() = NULL; 
+			(*f)();
+		};
+		int badAccess () {
+			int *i = (int *) -1; 
+			int j = *i;
+			return j;
+		};
+	};
+    }
+}
+
+

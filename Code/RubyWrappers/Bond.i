@@ -1,7 +1,7 @@
 /* 
-* $Id$
+* $Id: Bond.i 2519 2013-05-17 03:01:18Z glandrum $
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -31,25 +31,51 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+%include "std_string.i"
+%include "std_vector.i"
+%include "std_map.i"
+%include "std_pair.i"
+
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <RDGeneral/types.h>
+#include <GraphMol/Bond.h>
+#include <GraphMol/FileParsers/MolFileStereochem.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%ignore RDKit::Bond::getValenceContrib(const Atom *) const;
+%ignore RDKit::Bond::Match(const Bond *) const;
+%ignore RDKit::Bond::setBeginAtom(Atom *at);
+%ignore RDKit::Bond::setEndAtom(Atom *at);
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%include <GraphMol/Bond.h>
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%extend RDKit::Bond {
+  std::string getProp(const std::string key){
+    std::string res;
+    ($self)->getProp(key, res);
+    return res;
+  }
+
+  /* Methods from MolFileStereoChem.h */
+  Bond::BondDir DetermineBondWedgeState(const RDKit::INT_MAP_INT &wedgeBonds,
+                                        const RDKit::Conformer *conf) {
+    RDKit::DetermineBondWedgeState(($self), wedgeBonds, conf);
+  }
+  
+  /* Based on corresponding methods in Atom.i */
+   bool IsInRing(){
+    if(!($self)->getOwningMol().getRingInfo()->isInitialized()){
+      RDKit::MolOps::findSSSR(($self)->getOwningMol());
+    }
+    return ($self)->getOwningMol().getRingInfo()->numBondRings(($self)->getIdx())!=0;
+  }
+
+  bool IsInRingSize(int size){
+    if(!($self)->getOwningMol().getRingInfo()->isInitialized()){
+      RDKit::MolOps::findSSSR(($self)->getOwningMol());
+    }
+    return ($self)->getOwningMol().getRingInfo()->isBondInRingOfSize(($self)->getIdx(),size);
+  }
+
+}
+

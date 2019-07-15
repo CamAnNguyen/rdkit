@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -32,24 +32,33 @@
 */
 
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <GraphMol/Descriptors/MolDescriptors.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%include <GraphMol/Descriptors/MolDescriptors.h>
+%include <GraphMol/Descriptors/Lipinski.h>
+%include <GraphMol/Descriptors/MolSurf.h>
+%include <GraphMol/Descriptors/ConnectivityDescriptors.h>
+%include <GraphMol/Descriptors/MQN.h>
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%inline %{
+  std::pair<double,double> calcCrippenDescriptors(const RDKit::ROMol &mol,
+                                                   bool includeHs=true,bool force=false) {
+    std::pair<double,double> res;
+    RDKit::Descriptors::calcCrippenDescriptors(mol, res.first, res.second, includeHs, force);
+    return res;
+  }
+  double calcMolLogP(const RDKit::ROMol &mol){
+    double logp,mr;
+    RDKit::Descriptors::calcCrippenDescriptors(mol,logp,mr);
+    return logp;
+  }
+  double calcMolMR(const RDKit::ROMol &mol){
+    double logp,mr;
+    RDKit::Descriptors::calcCrippenDescriptors(mol,logp,mr);
+    return mr;
+  }
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%}
+
+

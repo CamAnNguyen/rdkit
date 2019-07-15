@@ -26,16 +26,21 @@
 namespace RDKit {
 namespace AtomPairs {
 const unsigned int numTypeBits = 4;
-const unsigned int atomNumberTypes[1 << numTypeBits] = {
-    5, 6, 7, 8, 9, 14, 15, 16, 17, 33, 34, 35, 51, 52, 43};
+// const unsigned int atomNumberTypes[1 << numTypeBits] = {
+//     5, 6, 7, 8, 9, 14, 15, 16, 17, 33, 34, 35, 51, 52, 43};
+  const unsigned int atomNumberTypes[16] = {
+      5, 6, 7, 8, 9, 14, 15, 16, 17, 33, 34, 35, 51, 52, 43};
 const unsigned int numPiBits = 2;
-const unsigned int maxNumPi = (1 << numPiBits) - 1;
+// const unsigned int maxNumPi = (1 << numPiBits) - 1;
+const unsigned int maxNumPi = 15;
 const unsigned int numBranchBits = 3;
-const unsigned int maxNumBranches = (1 << numBranchBits) - 1;
+// const unsigned int maxNumBranches = (1 << numBranchBits) - 1;
+const unsigned int maxNumBranches = 7;
 const unsigned int numChiralBits = 2;
 const unsigned int codeSize = numTypeBits + numPiBits + numBranchBits;
 const unsigned int numPathBits = 5;
-const unsigned int maxPathLen = (1 << numPathBits) - 1;
+// const unsigned int maxPathLen = (1 << numPathBits) - 1;
+const unsigned int maxPathLen = 31;
 const unsigned int numAtomPairFingerprintBits =
     numPathBits + 2 * codeSize;  // note that this is only accurate if chirality
                                  // is not included

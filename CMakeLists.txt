@@ -20,8 +20,8 @@ set(CMAKE_MODULE_PATH
 add_library(rdkit_base INTERFACE)
 add_dependencies(rdkit_base catch)
 
-option(RDK_BUILD_SWIG_WRAPPERS "build the SWIG wrappers" OFF )
-option(RDK_BUILD_PYTHON_WRAPPERS "build the standard python wrappers" ON )
+option(RDK_BUILD_SWIG_WRAPPERS "build the SWIG wrappers" ON )
+option(RDK_BUILD_PYTHON_WRAPPERS "build the standard python wrappers" OFF )
 option(RDK_BUILD_COMPRESSED_SUPPLIERS "build in support for compressed MolSuppliers" OFF )
 option(RDK_BUILD_INCHI_SUPPORT "build the rdkit inchi wrapper" OFF )
 option(RDK_BUILD_AVALON_SUPPORT "install support for the avalon toolkit. Use the variable AVALONTOOLS_DIR to set the location of the source." OFF )
@@ -36,7 +36,8 @@ option(RDK_INSTALL_PYTHON_TESTS "install the rdkit Python tests with the wrapper
 option(RDK_BUILD_THREADSAFE_SSS "enable thread-safe substructure searching" ON )
 option(RDK_BUILD_SLN_SUPPORT "include support for the SLN format" ON )
 option(RDK_TEST_MULTITHREADED "run some tests of multithreading" ON )
-option(RDK_BUILD_SWIG_JAVA_WRAPPER "build the SWIG JAVA wrappers (does nothing if RDK_BUILD_SWIG_WRAPPERS is not set)" ON )
+option(RDK_BUILD_SWIG_JAVA_WRAPPER "build the SWIG JAVA wrappers (does nothing if RDK_BUILD_SWIG_WRAPPERS is not set)" OFF )
+option(RDK_BUILD_SWIG_RUBY_WRAPPER "build the exeperimental SWIG RUBY wrappers (does nothing if RDK_BUILD_SWIG_WRAPPERS is not set)" ON )
 option(RDK_BUILD_SWIG_CSHARP_WRAPPER "build the experimental SWIG C# wrappers (does nothing if RDK_BUILD_SWIG_WRAPPERS is not set)" OFF )
 option(RDK_SWIG_STATIC "statically link rdkit libraries into the SWIG wrappers" ON )
 option(RDK_TEST_MMFF_COMPLIANCE "run MMFF compliance tests (requires tar/gzip)" ON )
@@ -67,6 +68,7 @@ endif()
 if(RDK_BUILD_SWIG_WRAPPERS!=ON)
   set(RDK_BUILD_SWIG_JAVA_WRAPPER OFF)
   set(RDK_BUILD_SWIG_CSHARP_WRAPPER OFF)
+  set(RDK_BUILD_SWIG_RUBY_WRAPPER OFF)
 endif()
 
 if(RDK_SWIG_STATIC AND RDK_BUILD_SWIG_WRAPPERS)
@@ -154,11 +156,13 @@ if(RDK_BUILD_RPATH_SUPPORT)
   ENDIF("${isSystemDir}" STREQUAL "-1")
 endif()
 
-
-
 if(RDK_BUILD_SWIG_WRAPPERS)
   set(RDKit_JavaLibDir "${RDKit_ExternalDir}/java_lib")
 endif(RDK_BUILD_SWIG_WRAPPERS)
+
+if(RDK_BUILD_SWIG_RUBY_WRAPPERS)
+  set(RDKit_RubyLibDir "${RDKit_ExternalDir}/ruby_lib")
+endif(RDK_BUILD_SWIG_RUBY_WRAPPERS)
 
 
 if(RDK_BUILD_COORDGEN_SUPPORT)
@@ -170,7 +174,6 @@ if(RDK_USE_URF)
   ADD_DEFINITIONS("-DRDK_USE_URF")
   include_directories(${RDKit_ExternalDir}/RingFamilies/RingDecomposerLib/src/RingDecomposerLib)
 endif()
-
 
 if(CMAKE_SIZEOF_VOID_P MATCHES 4)
   target_compile_definitions(rdkit_base INTERFACE "-DRDK_32BIT_BUILD")
@@ -546,6 +549,7 @@ SET(CPACK_PACKAGE_VERSION_MAJOR ${RDKit_Year})
 SET(CPACK_PACKAGE_VERSION_MINOR ${RDKit_Month})
 SET(CPACK_PACKAGE_VERSION_PATCH ${RDKit_Revision}${RDKit_RevisionModifier})
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+
 #IF(WIN32 AND NOT UNIX)
 #  # There is a bug in NSI that does not handle full unix paths properly. Make
 #  # sure there is at least one set of four (4) backlasshes.

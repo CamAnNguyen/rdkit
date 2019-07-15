@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -30,26 +30,24 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <Geometry/point.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%include <Geometry/point.h>
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%extend RDGeom::Point3D {
+	RDGeom::Point3D* RDGeom::Point3D::minus(const RDGeom::Point3D &other) {
+		RDGeom::Point3D* diff = new RDGeom::Point3D(*($self) - other);
+		return diff;
+	}
+}
+
+%extend RDGeom::Point2D {
+	RDGeom::Point2D* RDGeom::Point2D::minus(const RDGeom::Point2D &other) {
+		RDGeom::Point2D* diff = new RDGeom::Point2D(*($self) - other);
+		return diff;
+	}
+}
+

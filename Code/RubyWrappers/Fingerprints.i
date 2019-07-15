@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -32,24 +32,24 @@
 */
 
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <DataStructs/ExplicitBitVect.h>
+#include <DataStructs/BitOps.h>
+#include <GraphMol/Fingerprints/FingerprintUtil.h>
+#include <GraphMol/Fingerprints/Fingerprints.h>
+#include <GraphMol/Fingerprints/MACCS.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%template(UIntPair) std::pair<boost::uint32_t,boost::uint32_t>;
+%template(BitInfoMap) std::map<boost::uint32_t,std::vector<std::pair<boost::uint32_t,boost::uint32_t> > >;
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%newobject RDKit::RDKFingerprintMol;
+%newobject RDKit::LayeredFingerprintMol;
+%newobject RDKit::PatternFingerprintMol;
+%include <GraphMol/Fingerprints/Fingerprints.h>
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%newobject RDKit::MACCSFingerprints::getFingerprintAsBitVect;
+%rename(MACCSFingerprintMol) RDKit::MACCSFingerprints::getFingerprintAsBitVect;
+%include <GraphMol/Fingerprints/MACCS.h>
+
+%ignore RDKit::RDKitFPUtils::enumerateAllPaths;
+%include <GraphMol/Fingerprints/FingerprintUtil.h>

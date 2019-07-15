@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -31,25 +31,34 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <boost/cstdint.hpp>
+#include <DataStructs/SparseIntVect.h>
+#include <GraphMol/Fingerprints/MorganFingerprints.h>
+#include <MorganFingerprints.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+//%include <DataStructs/SparseIntVect.h>
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%newobject RDKit::MorganFingerprints::getFingerprint;
+%rename(MorganFingerprintMol) RDKit::MorganFingerprints::getFingerprint;
+%newobject RDKit::MorganFingerprints::getFingerprintAsBitVect;
+%rename(getMorganFingerprintAsBitVect) RDKit::MorganFingerprints::getFingerprintAsBitVect;
+%include <GraphMol/Fingerprints/MorganFingerprints.h>
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+%include <DataStructs/BitOps.h>
+/* %template(TanimotoSimilarityEBV) TanimotoSimilarity<ExplicitBitVect,ExplicitBitVect>; */
+/* %template(DiceSimilarityEBV) DiceSimilarity<ExplicitBitVect,ExplicitBitVect>; */
+/* %template(DiceSimilaritSIVu32) RDKit::DiceSimilarity<boost::uint32_t>; */
+/* %template(DiceSimilaritSIVi32) RDKit::DiceSimilarity<boost::int32_t>; */
+/* %template(DiceSimilaritSIVi64) RDKit::DiceSimilarity<boost::int64_t>; */
+/* %template(TanimotoSimilaritySIVu32) RDKit::TanimotoSimilarity<boost::uint32_t>; */
+/* %template(TanimotoSimilaritySIVi32) RDKit::TanimotoSimilarity<boost::int32_t>; */
+/* %template(TanimotoSimilaritySIVi64) RDKit::TanimotoSimilarity<boost::int64_t>; */
+/* %template(TverskySimilaritSIVu32) RDKit::TverskySimilarity<boost::uint32_t>; */
+/* %template(TverskySimilaritSIVi32) RDKit::TverskySimilarity<boost::int32_t>; */
+/* %template(TverskySimilaritSIVi64) RDKit::TverskySimilarity<boost::int64_t>; */
+
+
+%include "MorganFingerprints.h"

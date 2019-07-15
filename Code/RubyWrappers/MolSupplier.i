@@ -1,7 +1,7 @@
 /* 
 * $Id$
 *
-*  Copyright (c) 2011, Novartis Institutes for BioMedical Research Inc.
+*  Copyright (c) 2010, Novartis Institutes for BioMedical Research Inc.
 *  All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -31,25 +31,49 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+%include "std_string.i"
+%include "std_vector.i"
+%include "std_map.i"
+%include "std_pair.i"
+
 %{
-#include <GraphMol/ChemTransforms/ChemTransforms.h>
-// Fixes annoying compilation namespace issue
-typedef RDKit::MatchVectType MatchVectType;
+#include <GraphMol/FileParsers/MolSupplier.h>
+#include <GraphMol/Resonance.h>
+#include <GraphMol/Substruct/SubstructMatch.h>
 %}
 
-%newobject deleteSubstructs;
-%newobject replaceSidechains;
-%newobject replaceCores;
-%newobject MurckoDecompose;
-%include <GraphMol/ChemTransforms/ChemTransforms.h>
+%include "Streams.i"
 
-%ignore fragmentOnBonds;
-%ignore fragmentOnSomeBonds;
-%ignore constructFragmenterAtomTypes;
-%ignore constructBRICSAtomTypes;
-%ignore constructFragmenterBondTypes;
-%ignore constructBRICSBondTypes;
+%newobject RDKit::ForwardSDMolSupplier::next;
+%newobject RDKit::ResonanceMolSupplier::next;
+%newobject RDKit::SDMolSupplier::next;
+%newobject RDKit::SmilesMolSupplier::next;
+%newobject RDKit::TDTMolSupplier::next;
+%newobject RDKit::PDBMolSupplier::next;
 
-%newobject fragmentOnBRICSBonds;
-%template(UIntMolMap) std::map<unsigned int,boost::shared_ptr<RDKit::ROMol> >;
-%include <GraphMol/ChemTransforms/MolFragmenter.h>
+
+%include <GraphMol/FileParsers/MolSupplier.h>
+
+%extend RDKit::ForwardSDMolSupplier {
+    ForwardSDMolSupplier(RDKit::gzstream *strm, bool sanitize=true, bool removeHs = true,
+                  bool strictParsing = true) {
+    const bool takeOwnership = false;
+    RDKit::ForwardSDMolSupplier*foo = new RDKit::ForwardSDMolSupplier(
+                                     (std::istream*)strm,
+                                     takeOwnership,
+                                     sanitize, removeHs, strictParsing);
+    PRECONDITION(!foo->atEnd(), "LDJKLJF");
+    return foo;
+  }
+};
+
+%include <GraphMol/Resonance.h>
+
+%extend RDKit::ResonanceMolSupplier {
+  std::vector< std::vector<std::pair<int, int> > > getSubstructMatches(RDKit::ROMol &query,bool uniquify=false, bool useChirality=false, int numThreads=1){
+    std::vector<RDKit::MatchVectType> mv;
+    SubstructMatch(*($self),query,mv,uniquify,true,useChirality,false,1000,numThreads);
+    return mv;
+  }
+}
+

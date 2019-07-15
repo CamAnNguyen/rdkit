@@ -32,8 +32,7 @@
 //%import "ROMol.i"
 %include "std_string.i"
 %include "std_vector.i"
-%include <boost_shared_ptr.i>
-%shared_ptr(RDKit::FilterCatalogEntry)
+
 
 %{
 #include <../RDGeneral/Dict.h>
@@ -43,38 +42,22 @@
 #include <GraphMol/FilterCatalog/FilterCatalogEntry.h>
 #include <GraphMol/FilterCatalog/FilterCatalog.h>
 
-// bug fix for swig, it removes these from their namespaces
-typedef RDCatalog::Catalog<RDKit::FilterCatalogEntry, RDKit::FilterCatalogParams>::paramType_t paramType_t;
-
-typedef std::vector<std::string> STR_VECT;
+  // bug fix for swig, it removes these from their namespaces
+  typedef RDCatalog::Catalog<RDKit::FilterCatalogEntry, RDKit::FilterCatalogParams>::paramType_t paramType_t;
+  typedef RDCatalog::Catalog<RDKit::FilterCatalogEntry, RDKit::FilterCatalogParams>::entryType_t entryType_t;
+  typedef std::vector<std::string> STR_VECT;
 %}
 
+%feature("ignore") std::vector< boost::shared_ptr<RDKit::FilterCatalogEntry> >::equals;
 %template(FilterCatalogEntry_Vect) std::vector< boost::shared_ptr<RDKit::FilterCatalogEntry> >;
-%template(FilterCatalogEntry_VectVect) std::vector<std::vector< boost::shared_ptr<const RDKit::FilterCatalogEntry> > >;
 
-%template(FilterCatalogEntryVect) std::vector< const RDKit::FilterCatalogEntry* >;
-%template(UChar_Vect) std::vector<unsigned char>;
-/* %template(FilterMatch_Vect) std::vector<RDKit::FilterMatch>; */
-VECTORTEMPLATE_WRAP(FilterMatch, RDKit::FilterMatch)
-VECTORTEMPLATE_WRAP(FilterCatalogEntry, RDKit::FilterCatalogEntry*)
-%include "enums.swg"
+/* %include "enums.swg" */
 
 %include <../RDGeneral/Dict.h>
 %include <../Catalogs/Catalog.h>
 %include <../Catalogs/CatalogParams.h>
 %include <GraphMol/Substruct/SubstructMatch.h>
 
-
-%typemap(javacode) RDKit::FilterCatalog %{
-     public static FilterCatalog Deserialize(byte[] b) {
-     UChar_Vect vec = new UChar_Vect();
-     vec.reserve(b.length);
-     for (int size=0;size<b.length;++size) {
-       vec.add(b[size]);
-     }
-     return new FilterCatalog(vec);
-   }
-%}
 
 %extend RDKit::FilterMatch {
   MatchVectType getAtomMatches() {
@@ -111,20 +94,20 @@ VECTORTEMPLATE_WRAP(FilterCatalogEntry, RDKit::FilterCatalogEntry*)
   //  unthinkable and cast away const.
   //  Also we can't use FilterCatalog::SENTRY because swig thinks it is a new
   //   type.  Bad swig!
-  boost::shared_ptr<RDKit::FilterCatalogEntry> getFirstMatch(const ROMol &mol) {
-    RDKit::FilterCatalog::CONST_SENTRY res = self->getFirstMatch(mol);
-    return boost::const_pointer_cast<RDKit::FilterCatalogEntry>(res);
-  }
+  /* boost::shared_ptr<RDKit::FilterCatalogEntry> getFirstMatch(const ROMol &mol) { */
+  /*   RDKit::FilterCatalog::CONST_SENTRY res = self->getFirstMatch(mol); */
+  /*   return boost::const_pointer_cast<RDKit::FilterCatalogEntry>(res); */
+  /* } */
 
-  std::vector<boost::shared_ptr<RDKit::FilterCatalogEntry> > getMatches(const ROMol &mol) {
-    std::vector<RDKit::FilterCatalog::CONST_SENTRY> matches = self->getMatches(mol);
-    std::vector<RDKit::FilterCatalog::SENTRY> res;
-    res.reserve(matches.size());
-    for (size_t i=0; i< matches.size(); ++i) {
-      res.push_back( boost::const_pointer_cast<RDKit::FilterCatalogEntry>(matches[i]) );
-    }
-    return res;
- }
+ /*  std::vector<boost::shared_ptr<RDKit::FilterCatalogEntry> > getMatches(const ROMol &mol) { */
+ /*    std::vector<RDKit::FilterCatalog::CONST_SENTRY> matches = self->getMatches(mol); */
+ /*    std::vector<RDKit::FilterCatalog::SENTRY> res; */
+ /*    res.reserve(matches.size()); */
+ /*    for (size_t i=0; i< matches.size(); ++i) { */
+ /*      res.push_back( boost::const_pointer_cast<RDKit::FilterCatalogEntry>(matches[i]) ); */
+ /*    } */
+ /*    return res; */
+ /* } */
 
   // re-wrap swig is making duplicate entries for some strange reason
   unsigned int addEntry(boost::shared_ptr<RDKit::FilterCatalogEntry> entry) {
@@ -162,36 +145,6 @@ VECTORTEMPLATE_WRAP(FilterCatalogEntry, RDKit::FilterCatalogEntry*)
 %ignore RDKit::Dict::getPropList;
 
 
-#ifdef SWIGJAVA
-%typemap(jni) std::string RDKit::FilterCatalog::Serialize "jbyteArray"
-%typemap(jtype) std::string RDKit::FilterCatalog::Serialize "byte[]"
-%typemap(jstype) std::string RDKit::FilterCatalog::Serialize "byte[]"
-%typemap(javaout) std::string RDKit::FilterCatalog::Serialize {
-  return $jnicall;
-}
-%typemap(out) std::string RDKit::FilterCatalog::Serialize {
-  $result = JCALL1(NewByteArray, jenv, $1.size());
-  JCALL4(SetByteArrayRegion, jenv, $result, 0, $1.size(), (const jbyte*)$1.c_str());
-}
-#endif
-
-#ifdef SWIGCSHARP
-%typemap(csbase) RDKit::FilterCatalogParams::FilterCatalogs "uint"
-#endif
-  
 %include <GraphMol/FilterCatalog/FilterMatcherBase.h>
 %include <GraphMol/FilterCatalog/FilterCatalogEntry.h>
 %include <GraphMol/FilterCatalog/FilterCatalog.h>
-
-
-
-%pragma(java) modulecode=%{
-   public static FilterCatalog FilterCatalogDeserialize(byte[] b) {
-     UChar_Vect vec = new UChar_Vect();
-     vec.reserve(b.length);
-     for (int size=0;size<b.length;++size) {
-       vec.add(b[size]);
-     }
-     return new FilterCatalog(vec);
-   }
-%}
