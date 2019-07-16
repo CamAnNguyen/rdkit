@@ -87,8 +87,9 @@
  * Then add the necessary Java code to modify the Conformer object to no longer be the owner of the
  * underlying C++ object.
  */
+
 %ignore addConformer(Conformer * conf, bool assignId=false);
-%rename(addConformer) RDKit::ROMol::addConf;
+/* %rename(addConformer) RDKit::ROMol::addConf; */
 %include <GraphMol/ROMol.h>
 
 %ignore SubstructMatch;
@@ -96,8 +97,6 @@
 
 %ignore RDKit::MolPickler;
 %include <GraphMol/MolPickler.h>
-
-
 
 %newobject removeHs;
 %newobject addHs;
@@ -139,6 +138,7 @@ void setPreferCoordGen(bool);
   }
 
   /* Used in the addConformer modifications described above */
+  %apply SWIGTYPE *DISOWN {RDKit::Conformer *ownedConf};
   unsigned int RDKit::ROMol::addConf(RDKit::Conformer * ownedConf, bool assignId=false) {
     return self->addConformer(ownedConf, assignId);
   }

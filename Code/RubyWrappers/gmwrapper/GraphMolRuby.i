@@ -365,6 +365,7 @@ typedef RDKit::MatchVectType MatchVectType;
 %include "../Dict.i"
 %include "../RDProps.i"
 %include "../StereoGroup.i"
+%include "../ROMol.i"
 %include "../RWMol.i"
 %include "../Bond.i"
 %include "../BondIterators.i"
@@ -372,7 +373,6 @@ typedef RDKit::MatchVectType MatchVectType;
 %include "../AtomIterators.i"
 /* %include "../AtomPairs.i" */
 %include "../Canon.i"
-%include "../Conformer.i"
 %include "../QueryAtom.i"
 %include "../QueryBond.i"
 %include "../QueryOps.i"
@@ -406,8 +406,7 @@ typedef RDKit::MatchVectType MatchVectType;
 %include "../SubstructLibrary.i"
 %include "../Streams.i"
 
-/* %include "../RGroupDecomposition.i" */
-%include "../ROMol.i"
+%include "../RGroupDecomposition.i"
 %include "../Descriptors.i"
 
 #ifdef RDK_BUILD_AVALON_SUPPORT

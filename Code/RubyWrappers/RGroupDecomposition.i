@@ -13,6 +13,6 @@
 #include <GraphMol/RGroupDecomposition/RGroupDecomp.h>
 %}
 
-%template(SparseIntVect64) RDKit::SparseIntVect<boost::int64_t>;
+//%template(SparseIntVect64) RDKit::SparseIntVect<boost::int64_t>;
 
 %include <GraphMol/RGroupDecomposition/RGroupDecomp.h>
